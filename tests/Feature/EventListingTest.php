@@ -75,6 +75,17 @@ it('renders the two visualization pages and the dashboard without authentication
     $this->get(route('dashboard'))->assertOk();
 });
 
+it('renders the grid page with filter metadata', function () {
+    $this->get(route('events.visual1'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Events/VisualOne')
+            ->has('statuses', 4)
+            ->has('cities')
+            ->has('filters.from')
+        );
+});
+
 it('filters the data endpoint by date range', function () {
     $user = User::factory()->create();
     Event::factory()->for($user)->create(['created_time' => Carbon::parse('2024-06-01')->timestamp]);

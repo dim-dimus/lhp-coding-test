@@ -24,6 +24,21 @@ class EventController extends Controller
         ]);
     }
 
+    public function visualOne(): Response
+    {
+        return Inertia::render('Events/VisualOne', [
+            // Default the grid to upcoming events (soonest first).
+            'filters' => [
+                'status' => null,
+                'from' => now()->toDateString(),
+                'to' => null,
+                'city' => null,
+            ],
+            'statuses' => self::STATUSES,
+            'cities' => ReverseGeocoder::cities(),
+        ]);
+    }
+
     public function data(Request $request): JsonResponse
     {
         $start = microtime(true);
@@ -87,6 +102,6 @@ class EventController extends Controller
                         ->whereBetween('longitude', [$bbox['min_lng'], $bbox['max_lng']]);
                 }
             })
-            ->orderByDesc('created_time');
+            ->orderBy('created_time');
     }
 }

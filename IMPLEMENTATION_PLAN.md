@@ -170,7 +170,7 @@ Phases 0→1→2 are the critical path. Phases 3 and 4 can proceed in parallel o
 - [x] P0: SQLite WAL/busy_timeout + `created_time` and `(lat,lng)` indexes
 - [x] P1: ReverseGeocoder, EventImages, Event accessors, EventController DTO + filters
 - [x] P2: events types, useEventFeed, useEventDateTime, EventFilters bar (fix `aplyFilters` bug)
-- [ ] P3: VisualOne card grid + EventCard
+- [x] P3: VisualOne card grid + EventCard
 - [ ] P4: VisualTwo locally-built calendar (per-day counts + day drill-in)
 - [ ] P5: date + location filtering verified on both pages
 - [ ] P6: attendees table/model/request/controller/route + Show.vue form
