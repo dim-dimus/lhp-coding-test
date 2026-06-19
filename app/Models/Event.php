@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -23,6 +25,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $updated_at
  * @property-read string $name
  * @property-read User $user
+ * @property-read Collection<int, Attendee> $attendees
  */
 class Event extends Model
 {
@@ -48,6 +51,14 @@ class Event extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return HasMany<Attendee, $this>
+     */
+    public function attendees(): HasMany
+    {
+        return $this->hasMany(Attendee::class);
     }
 
     /**

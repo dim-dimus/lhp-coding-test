@@ -173,6 +173,6 @@ Phases 0→1→2 are the critical path. Phases 3 and 4 can proceed in parallel o
 - [x] P3: VisualOne card grid + EventCard
 - [x] P4: VisualTwo locally-built calendar (per-day counts + day drill-in)
 - [ ] P5: date + location filtering verified on both pages
-- [ ] P6: attendees table/model/request/controller/route + Show.vue form
+- [x] P6: attendees table/model/request/controller/route + Show.vue form
 - [ ] P7: confirmation mail, reminder command (72h/24h, idempotent), schedule entry
 - [ ] P8: animations, Pest tests, DECISIONS.md, green `composer ci:check`

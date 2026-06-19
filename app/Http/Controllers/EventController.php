@@ -95,7 +95,8 @@ class EventController extends Controller
         $event->load('user');
 
         return Inertia::render('Events/Show', [
-            'event' => $event,
+            'event' => (new EventResource($event))->resolve(),
+            'attendeesCount' => $event->attendees()->count(),
         ]);
     }
 
