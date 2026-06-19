@@ -167,8 +167,8 @@ Phases 0→1→2 are the critical path. Phases 3 and 4 can proceed in parallel o
 
 ## Checklist
 
-- [ ] P0: SQLite WAL/busy_timeout + `created_time` and `(lat,lng)` indexes
-- [ ] P1: ReverseGeocoder, EventImages, Event accessors, EventController DTO + filters
+- [x] P0: SQLite WAL/busy_timeout + `created_time` and `(lat,lng)` indexes
+- [x] P1: ReverseGeocoder, EventImages, Event accessors, EventController DTO + filters
 - [ ] P2: events types, useEventFeed, useEventDateTime, EventFilters bar (fix `aplyFilters` bug)
 - [ ] P3: VisualOne card grid + EventCard
 - [ ] P4: VisualTwo locally-built calendar (per-day counts + day drill-in)

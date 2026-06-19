@@ -1,0 +1,44 @@
+# Dependencies
+/node_modules
+/vendor
+/auth.json
+
+# Environment
+.env
+.env.backup
+.env.production
+
+# Build output / compiled assets
+/bootstrap/ssr
+/public/build
+/public/hot
+/public/storage
+
+# Generated frontend (Laravel Wayfinder)
+/resources/js/actions
+/resources/js/routes
+/resources/js/wayfinder
+
+# Database (SQLite file can be multiple GB when fully seeded; WAL sidecars)
+/database/*.sqlite
+/database/*.sqlite-shm
+/database/*.sqlite-wal
+
+# Caches & test artifacts
+/.phpunit.cache
+/.phpunit.result.cache
+/storage/*.key
+/storage/pail
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# Editors / IDE / tooling
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+.phpactor.json
+.DS_Store

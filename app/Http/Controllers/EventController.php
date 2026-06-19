@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EventResource;
 use App\Models\Event;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Support\ReverseGeocoder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,27 +13,34 @@ use Inertia\Response;
 
 class EventController extends Controller
 {
+    private const STATUSES = ['draft', 'published', 'cancelled', 'sold_out'];
+
     public function index(Request $request): Response
     {
         return Inertia::render('Events/Index', [
-            'filters' => [
-                'status' => $request->status,
-                'from' => $request->input('from', '2023-01-01'),
-            ],
-            'statuses' => ['draft', 'published', 'cancelled', 'sold_out'],
+            'filters' => $this->filters($request),
+            'statuses' => self::STATUSES,
+            'cities' => ReverseGeocoder::cities(),
         ]);
     }
 
     public function data(Request $request): JsonResponse
     {
-        [$events, $stats] = $this->loadListing($request);
+        $start = microtime(true);
+
+        $paginator = $this->listingQuery($request)->paginate(50)->withQueryString();
+
+        $data = EventResource::collection($paginator->getCollection())->resolve($request);
 
         return response()->json([
-            'data' => $events->items(),
-            'current_page' => $events->currentPage(),
-            'last_page' => $events->lastPage(),
-            'total' => $events->total(),
-            'stats' => $stats,
+            'data' => $data,
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'total' => $paginator->total(),
+            'stats' => [
+                'ms' => (int) round((microtime(true) - $start) * 1000),
+                'bytes' => strlen((string) json_encode($data)),
+            ],
         ]);
     }
 
@@ -45,23 +54,39 @@ class EventController extends Controller
     }
 
     /**
-     * @return array{0: LengthAwarePaginator, 1: array{ms: int, bytes: int}}
+     * @return array{status: string|null, from: string|null, to: string|null, city: string|null}
      */
-    private function loadListing(Request $request): array
+    private function filters(Request $request): array
     {
-        $start = microtime(true);
-
-        $events = Event::with('user')
-            ->when($request->status, fn ($q, $s) => $q->where('status', $s))
-            ->orderByDesc('created_time')
-            ->paginate(50)
-            ->withQueryString();
-
-        $stats = [
-            'ms' => (int) round((microtime(true) - $start) * 1000),
-            'bytes' => strlen((string) json_encode($events->items())),
+        return [
+            'status' => $request->input('status'),
+            'from' => $request->input('from', '2023-01-01'),
+            'to' => $request->input('to'),
+            'city' => $request->input('city'),
         ];
+    }
 
-        return [$events, $stats];
+    /**
+     * Listing query. Every filter and the sort key target an indexed column
+     * (status, created_time, latitude/longitude) so this stays fast against
+     * the full dataset; the JSON payload is only decoded later, per visible row.
+     *
+     * @return Builder<Event>
+     */
+    private function listingQuery(Request $request): Builder
+    {
+        return Event::query()
+            ->with('user')
+            ->when($request->input('status'), fn (Builder $q, $status) => $q->where('status', $status))
+            ->when($request->date('from', null, 'UTC'), fn (Builder $q, $from) => $q->where('created_time', '>=', $from->startOfDay()->timestamp))
+            ->when($request->date('to', null, 'UTC'), fn (Builder $q, $to) => $q->where('created_time', '<=', $to->endOfDay()->timestamp))
+            ->when($request->input('city'), function (Builder $q, $city) {
+                $bbox = ReverseGeocoder::bbox($city);
+                if ($bbox !== null) {
+                    $q->whereBetween('latitude', [$bbox['min_lat'], $bbox['max_lat']])
+                        ->whereBetween('longitude', [$bbox['min_lng'], $bbox['max_lng']]);
+                }
+            })
+            ->orderByDesc('created_time');
     }
 }
