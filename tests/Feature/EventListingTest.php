@@ -124,3 +124,43 @@ it('serves a readable location and local images in the listing', function () {
 
     expect($response->json('data.0.images'))->each->toStartWith('/images/events/');
 });
+
+it('renders the calendar page with filter metadata', function () {
+    $this->get(route('events.visual2'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Events/VisualTwo')
+            ->has('statuses', 4)
+            ->has('cities')
+        );
+});
+
+it('returns per-day event counts for the calendar', function () {
+    $user = User::factory()->create();
+    Event::factory()->for($user)->create(['created_time' => Carbon::parse('2026-06-10 12:00', 'UTC')->timestamp]);
+    Event::factory()->for($user)->create(['created_time' => Carbon::parse('2026-06-10 18:00', 'UTC')->timestamp]);
+    Event::factory()->for($user)->create(['created_time' => Carbon::parse('2026-06-12 09:00', 'UTC')->timestamp]);
+
+    $this->getJson(route('events.calendar', [
+        'start' => Carbon::parse('2026-06-01', 'UTC')->timestamp,
+        'end' => Carbon::parse('2026-07-01', 'UTC')->timestamp,
+        'offset' => 0,
+    ]))
+        ->assertOk()
+        ->assertJsonPath('counts.2026-06-10', 2)
+        ->assertJsonPath('counts.2026-06-12', 1);
+});
+
+it('drills into a single day via start/end timestamps', function () {
+    $user = User::factory()->create();
+    Event::factory()->for($user)->create(['created_time' => Carbon::parse('2026-06-10 12:00', 'UTC')->timestamp]);
+    Event::factory()->for($user)->create(['created_time' => Carbon::parse('2026-06-11 12:00', 'UTC')->timestamp]);
+
+    $this->getJson(route('events.data', [
+        'start' => Carbon::parse('2026-06-10 00:00', 'UTC')->timestamp,
+        'end' => Carbon::parse('2026-06-11 00:00', 'UTC')->timestamp,
+    ]))
+        ->assertOk()
+        ->assertJsonPath('total', 1)
+        ->assertJsonPath('data.0.created_time', Carbon::parse('2026-06-10 12:00', 'UTC')->timestamp);
+});

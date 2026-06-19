@@ -171,7 +171,7 @@ Phases 0→1→2 are the critical path. Phases 3 and 4 can proceed in parallel o
 - [x] P1: ReverseGeocoder, EventImages, Event accessors, EventController DTO + filters
 - [x] P2: events types, useEventFeed, useEventDateTime, EventFilters bar (fix `aplyFilters` bug)
 - [x] P3: VisualOne card grid + EventCard
-- [ ] P4: VisualTwo locally-built calendar (per-day counts + day drill-in)
+- [x] P4: VisualTwo locally-built calendar (per-day counts + day drill-in)
 - [ ] P5: date + location filtering verified on both pages
 - [ ] P6: attendees table/model/request/controller/route + Show.vue form
 - [ ] P7: confirmation mail, reminder command (72h/24h, idempotent), schedule entry

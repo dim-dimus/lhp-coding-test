@@ -3,10 +3,14 @@ import type { City, EventFilters } from '@/types/events';
 
 const filters = defineModel<EventFilters>({ required: true });
 
-defineProps<{
-    statuses: string[];
-    cities: City[];
-}>();
+withDefaults(
+    defineProps<{
+        statuses: string[];
+        cities: City[];
+        showDates?: boolean;
+    }>(),
+    { showDates: true },
+);
 
 const emit = defineEmits<{ change: [] }>();
 
@@ -44,27 +48,29 @@ function reset() {
             </select>
         </div>
 
-        <div class="flex flex-col gap-1">
-            <label class="text-xs text-muted-foreground" for="filter-from">From</label>
-            <input
-                id="filter-from"
-                v-model="filters.from"
-                type="date"
-                class="h-9 rounded-md border border-input bg-background px-3 text-sm"
-                @change="emit('change')"
-            />
-        </div>
+        <template v-if="showDates">
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-muted-foreground" for="filter-from">From</label>
+                <input
+                    id="filter-from"
+                    v-model="filters.from"
+                    type="date"
+                    class="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                    @change="emit('change')"
+                />
+            </div>
 
-        <div class="flex flex-col gap-1">
-            <label class="text-xs text-muted-foreground" for="filter-to">To</label>
-            <input
-                id="filter-to"
-                v-model="filters.to"
-                type="date"
-                class="h-9 rounded-md border border-input bg-background px-3 text-sm"
-                @change="emit('change')"
-            />
-        </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-muted-foreground" for="filter-to">To</label>
+                <input
+                    id="filter-to"
+                    v-model="filters.to"
+                    type="date"
+                    class="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                    @change="emit('change')"
+                />
+            </div>
+        </template>
 
         <button type="button" class="h-9 px-3 text-sm text-muted-foreground hover:text-foreground" @click="reset">
             Reset
