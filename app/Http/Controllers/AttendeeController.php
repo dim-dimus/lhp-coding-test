@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttendeeRequest;
+use App\Mail\AttendanceConfirmationMail;
 use App\Models\Event;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 
 class AttendeeController extends Controller
 {
@@ -13,12 +15,15 @@ class AttendeeController extends Controller
         $validated = $request->validated();
 
         // Idempotent per (event, email): re-registering the same email is a no-op.
-        $event->attendees()->firstOrCreate(
+        $attendee = $event->attendees()->firstOrCreate(
             ['email' => $validated['email']],
             ['name' => $validated['name']],
         );
 
-        // Phase 7 will queue a confirmation email here for newly-created attendees.
+        if ($attendee->wasRecentlyCreated) {
+            $attendee->update(['confirmed_at' => now()]);
+            Mail::to($attendee->email)->queue(new AttendanceConfirmationMail($attendee));
+        }
 
         return back();
     }
