@@ -154,6 +154,23 @@ it('returns per-day event counts for the calendar', function () {
         ->assertJsonPath('counts.2026-06-12', 1);
 });
 
+it('buckets calendar counts by the viewer local day using the offset', function () {
+    $user = User::factory()->create();
+    // 23:00 UTC on the 10th is 01:00 on the 11th at UTC+2.
+    Event::factory()->for($user)->create(['created_time' => Carbon::parse('2026-06-10 23:00', 'UTC')->timestamp]);
+
+    $range = [
+        'start' => Carbon::parse('2026-06-01', 'UTC')->timestamp,
+        'end' => Carbon::parse('2026-07-01', 'UTC')->timestamp,
+    ];
+
+    $this->getJson(route('events.calendar', $range + ['offset' => 0]))
+        ->assertJsonPath('counts.2026-06-10', 1);
+
+    $this->getJson(route('events.calendar', $range + ['offset' => 7200]))
+        ->assertJsonPath('counts.2026-06-11', 1);
+});
+
 it('drills into a single day via start/end timestamps', function () {
     $user = User::factory()->create();
     Event::factory()->for($user)->create(['created_time' => Carbon::parse('2026-06-10 12:00', 'UTC')->timestamp]);

@@ -74,7 +74,7 @@ onMounted(loadCounts);
                     </div>
                 </div>
 
-                <div class="grid grid-cols-7 gap-1">
+                <div :key="monthLabel" class="grid animate-fade grid-cols-7 gap-1">
                     <div v-for="weekday in weekdays" :key="weekday" class="pb-1 text-center text-xs font-medium text-muted-foreground">
                         {{ weekday }}
                     </div>
@@ -107,7 +107,7 @@ onMounted(loadCounts);
             </div>
 
             <div class="rounded-xl border p-4">
-                <template v-if="selectedKey">
+                <div v-if="selectedKey" :key="selectedKey" class="animate-fade">
                     <h3 class="font-semibold">{{ selectedLabel }}</h3>
                     <p class="mb-3 text-sm text-muted-foreground">{{ dayTotal }} {{ dayTotal === 1 ? 'event' : 'events' }}</p>
 
@@ -127,7 +127,7 @@ onMounted(loadCounts);
                     </ul>
 
                     <p v-if="!loadingDay && dayTotal > dayEvents.length" class="mt-2 text-xs text-muted-foreground">+ {{ dayTotal - dayEvents.length }} more</p>
-                </template>
+                </div>
 
                 <div v-else class="flex h-full min-h-40 items-center justify-center text-center text-sm text-muted-foreground">
                     Select a day to see its events.

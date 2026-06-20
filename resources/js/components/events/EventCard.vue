@@ -34,7 +34,7 @@ const price = computed(() => {
 <template>
     <Link
         :href="`/events/${event.id}`"
-        class="group flex flex-col overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+        class="group flex flex-col overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg animate-rise"
     >
         <div class="relative aspect-video overflow-hidden bg-muted">
             <!-- Cover image cross-fades to the second image on hover, surfacing the 2+ images per event. -->

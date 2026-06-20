@@ -48,7 +48,7 @@ function register() {
 <template>
     <Head :title="event.name" />
 
-    <div class="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-6">
+    <div class="mx-auto flex w-full max-w-5xl animate-fade flex-col gap-6 p-4 sm:p-6">
         <Link href="/events-visual-1" class="text-sm text-muted-foreground hover:text-foreground">← Back to events</Link>
 
         <div class="flex flex-col gap-3">
@@ -109,7 +109,7 @@ function register() {
                 <div class="flex flex-col gap-3 rounded-xl border p-4">
                     <h2 class="font-semibold">Register your interest</h2>
 
-                    <div v-if="form.recentlySuccessful" class="rounded-md bg-primary/10 px-3 py-2 text-sm text-primary">
+                    <div v-if="form.recentlySuccessful" class="animate-fade rounded-md bg-primary/10 px-3 py-2 text-sm text-primary">
                         You're on the list — see you there!
                     </div>
 
