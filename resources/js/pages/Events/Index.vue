@@ -38,6 +38,7 @@ const hasMore = computed(() => lastPage.value === null || page.value < lastPage.
 
 const loadedSize = computed(() => {
     const kb = loadedBytes.value / 1024;
+
     return kb < 1024 ? `${kb.toFixed(1)} KB` : `${(kb / 1024).toFixed(2)} MB`;
 });
 
@@ -47,11 +48,18 @@ async function loadMore() {
     if (loading.value || !hasMore.value) {
         return;
     }
+
     loading.value = true;
 
     const params = new URLSearchParams({ page: String(page.value + 1) });
-    if (form.status) params.set('status', form.status);
-    if (form.from) params.set('from', form.from);
+
+    if (form.status) {
+        params.set('status', form.status);
+    }
+
+    if (form.from) {
+        params.set('from', form.from);
+    }
 
     try {
         const response = await fetch(`/events/data?${params.toString()}`, {
@@ -104,9 +112,11 @@ onMounted(() => {
         },
         { rootMargin: '400px' },
     );
+
     if (sentinel.value) {
         observer.observe(sentinel.value);
     }
+
     loadMore();
 });
 

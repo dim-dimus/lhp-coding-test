@@ -39,7 +39,9 @@ class SendEventReminders extends Command
 
         $attendees = Attendee::query()
             ->whereNull($flag)
-            ->whereHas('event', fn (Builder $query) => $query->whereBetween('created_time', [$lower + 1, $upper]))
+            ->whereHas('event', fn (Builder $query) => $query
+                ->where('status', 'published')
+                ->whereBetween('created_time', [$lower + 1, $upper]))
             ->with('event')
             ->get();
 

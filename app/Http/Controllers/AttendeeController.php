@@ -12,6 +12,10 @@ class AttendeeController extends Controller
 {
     public function store(StoreAttendeeRequest $request, Event $event): RedirectResponse
     {
+        // Only published events accept registrations (the UI also disables the
+        // button); this is the server-side guard behind it.
+        abort_unless($event->status === 'published', 403, 'Registration is closed for this event.');
+
         $validated = $request->validated();
 
         // Idempotent per (event, email): re-registering the same email is a no-op.

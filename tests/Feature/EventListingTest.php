@@ -5,6 +5,7 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
@@ -199,6 +200,45 @@ it('rejects an unknown city filter instead of returning all events', function ()
 it('rejects an out-of-range calendar offset', function () {
     $this->getJson(route('events.calendar', ['start' => 1, 'end' => 2, 'offset' => 999999]))
         ->assertStatus(422);
+});
+
+it('rejects a malformed date filter', function () {
+    $this->getJson(route('events.data', ['from' => 'not-a-date']))
+        ->assertStatus(422);
+});
+
+it('rejects a non-integer day-drill timestamp', function () {
+    $this->getJson(route('events.data', ['start' => 'abc']))
+        ->assertStatus(422);
+});
+
+it('buckets calendar counts into the previous local day for a negative offset', function () {
+    $user = User::factory()->create();
+    // 01:00 UTC on the 11th is 23:00 on the 10th at UTC-2.
+    Event::factory()->for($user)->create(['created_time' => Carbon::parse('2026-06-11 01:00', 'UTC')->timestamp]);
+
+    $range = [
+        'start' => Carbon::parse('2026-06-01', 'UTC')->timestamp,
+        'end' => Carbon::parse('2026-07-01', 'UTC')->timestamp,
+    ];
+
+    $this->getJson(route('events.calendar', $range + ['offset' => 0]))
+        ->assertJsonPath('counts.2026-06-11', 1);
+
+    $this->getJson(route('events.calendar', $range + ['offset' => -7200]))
+        ->assertJsonPath('counts.2026-06-10', 1);
+});
+
+it('keeps the listing query count flat regardless of result size', function () {
+    Event::factory()->count(20)->for(User::factory())->create(['status' => 'published']);
+
+    DB::enableQueryLog();
+    $this->getJson(route('events.data'))->assertOk();
+    $queries = count(DB::getQueryLog());
+    DB::disableQueryLog();
+
+    // A bounded set (count + page + eager-loaded users), not one query per row.
+    expect($queries)->toBeLessThanOrEqual(5);
 });
 
 it('excludes events without a start time from the listing', function () {

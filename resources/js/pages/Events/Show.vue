@@ -37,9 +37,15 @@ const price = computed(() => {
     return new Intl.NumberFormat(undefined, { style: 'currency', currency: value.currency }).format(value.amount);
 });
 
+const canRegister = computed(() => props.event.status === 'published');
+
 const form = useForm({ name: '', email: '' });
 
 function register() {
+    if (!canRegister.value) {
+        return;
+    }
+
     form.post(`/events/${props.event.id}/attendees`, {
         preserveScroll: true,
         onSuccess: () => form.reset(),
@@ -142,8 +148,9 @@ function register() {
                         </div>
                         <button
                             type="submit"
-                            :disabled="form.processing"
-                            class="h-9 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+                            :disabled="form.processing || !canRegister"
+                            :title="canRegister ? undefined : 'Event is not active'"
+                            class="h-9 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             Register
                         </button>

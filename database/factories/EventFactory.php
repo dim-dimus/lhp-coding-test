@@ -19,6 +19,7 @@ class EventFactory extends Factory
         $lat = fake()->latitude();
         $lng = fake()->longitude();
         $startsAt = fake()->numberBetween(strtotime('-1 year'), strtotime('+1 year'));
+        $words = fake()->words(3);
 
         return [
             'user_id' => User::factory(),
@@ -28,7 +29,7 @@ class EventFactory extends Factory
             'latitude' => $lat,
             'longitude' => $lng,
             'payload' => [
-                'name' => ucwords(fake()->words(3, true)),
+                'name' => ucwords(is_array($words) ? implode(' ', $words) : $words),
                 'category' => $type,
                 'venue' => ['name' => fake()->company(), 'capacity' => fake()->numberBetween(20, 50000)],
                 'location' => ['lat' => $lat, 'lng' => $lng],
@@ -36,5 +37,11 @@ class EventFactory extends Factory
                 'pricing' => ['currency' => 'USD', 'min_price' => fake()->randomFloat(2, 0, 250)],
             ],
         ];
+    }
+
+    /** Only published events accept registrations and reminders. */
+    public function published(): static
+    {
+        return $this->state(['status' => 'published']);
     }
 }
