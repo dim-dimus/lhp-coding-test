@@ -43,25 +43,30 @@ function submit() {
             </DialogHeader>
 
             <div v-if="done" class="flex flex-col gap-3">
-                <p class="animate-fade rounded-md bg-primary/10 px-3 py-2 text-sm text-primary">You're on the list — see you there!</p>
-                <button type="button" class="h-9 rounded-md border text-sm font-medium transition hover:bg-accent" @click="open = false">Done</button>
+                <p class="animate-fade bg-primary/10 text-primary rounded-md px-3 py-2 text-sm">You're on the list — see you there!</p>
+                <button type="button" class="hover:bg-accent h-9 rounded-md border text-sm font-medium transition" @click="open = false">Done</button>
             </div>
 
             <form v-else class="flex flex-col gap-3" @submit.prevent="submit">
                 <div class="flex flex-col gap-1">
-                    <label class="text-xs text-muted-foreground" for="register-name">Name</label>
-                    <input id="register-name" v-model="form.name" type="text" class="h-9 rounded-md border border-input bg-background px-3 text-sm" />
-                    <p v-if="form.errors.name" class="text-xs text-destructive">{{ form.errors.name }}</p>
+                    <label class="text-muted-foreground text-xs" for="register-name">Name</label>
+                    <input id="register-name" v-model="form.name" type="text" class="border-input bg-background h-9 rounded-md border px-3 text-sm" />
+                    <p v-if="form.errors.name" class="text-destructive text-xs">{{ form.errors.name }}</p>
                 </div>
                 <div class="flex flex-col gap-1">
-                    <label class="text-xs text-muted-foreground" for="register-email">Email</label>
-                    <input id="register-email" v-model="form.email" type="email" class="h-9 rounded-md border border-input bg-background px-3 text-sm" />
-                    <p v-if="form.errors.email" class="text-xs text-destructive">{{ form.errors.email }}</p>
+                    <label class="text-muted-foreground text-xs" for="register-email">Email</label>
+                    <input
+                        id="register-email"
+                        v-model="form.email"
+                        type="email"
+                        class="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                    />
+                    <p v-if="form.errors.email" class="text-destructive text-xs">{{ form.errors.email }}</p>
                 </div>
                 <button
                     type="submit"
                     :disabled="form.processing"
-                    class="h-9 rounded-md bg-primary text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+                    class="bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md text-sm font-medium transition disabled:opacity-50"
                 >
                     Register
                 </button>

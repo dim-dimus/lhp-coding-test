@@ -129,38 +129,29 @@ onBeforeUnmount(() => observer?.disconnect());
     <div class="flex flex-col gap-4 p-4">
         <div>
             <h1 class="text-xl font-semibold">Events</h1>
-            <p class="text-sm text-muted-foreground">
+            <p class="text-muted-foreground text-sm">
                 {{ total !== null ? `${total.toLocaleString()} total events` : '—' }}
             </p>
         </div>
 
         <form class="flex flex-wrap items-end gap-3" @submit.prevent>
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-muted-foreground" for="status">Status</label>
-                <select
-                    id="status"
-                    v-model="form.status"
-                    class="h-9 rounded-md border border-input bg-background px-3 text-sm"
-                >
+                <label class="text-muted-foreground text-xs" for="status">Status</label>
+                <select id="status" v-model="form.status" class="border-input bg-background h-9 rounded-md border px-3 text-sm">
                     <option value="">All</option>
                     <option v-for="s in statuses" :key="s" :value="s">{{ s }}</option>
                 </select>
             </div>
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-muted-foreground" for="from">From</label>
-                <input
-                    id="from"
-                    v-model="form.from"
-                    type="date"
-                    class="h-9 rounded-md border border-input bg-background px-3 text-sm"
-                />
+                <label class="text-muted-foreground text-xs" for="from">From</label>
+                <input id="from" v-model="form.from" type="date" class="border-input bg-background h-9 rounded-md border px-3 text-sm" />
             </div>
             <Button type="button" @click.prevent="applyFilters">Filter</Button>
         </form>
 
         <div class="overflow-x-auto rounded-lg border">
             <table class="w-full text-sm">
-                <thead class="border-b bg-muted/50 text-left">
+                <thead class="bg-muted/50 border-b text-left">
                     <tr>
                         <th class="px-3 py-2 font-medium">ID</th>
                         <th class="px-3 py-2 font-medium">Type</th>
@@ -184,7 +175,7 @@ onBeforeUnmount(() => observer?.disconnect());
                         </td>
                     </tr>
                     <tr v-if="!loading && hasLoadedOnce && rows.length === 0">
-                        <td colspan="6" class="px-3 py-8 text-center text-muted-foreground">No events found.</td>
+                        <td colspan="6" class="text-muted-foreground px-3 py-8 text-center">No events found.</td>
                     </tr>
                 </tbody>
             </table>

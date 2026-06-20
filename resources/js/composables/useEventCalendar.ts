@@ -60,9 +60,7 @@ export function useEventCalendar() {
         return addDays(first, -mondayOffset);
     });
 
-    const monthLabel = computed(() =>
-        new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(monthAnchor.value),
-    );
+    const monthLabel = computed(() => new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(monthAnchor.value));
 
     const maxCount = computed(() => Math.max(1, ...Object.values(counts.value)));
 

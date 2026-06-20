@@ -58,11 +58,22 @@ times. Emails are sent server-side with no viewer context, so they show the time
 Kept light: card fade-rise on load, a calendar heatmap + fade on day/month change, and a
 detail-page fade. All gated behind `prefers-reduced-motion`.
 
-## Known caveat — `composer ci:check`
+## Tooling — `composer ci:check`
 
-The feature code here is Pint / PHPStan / ESLint clean. The repo as delivered, however, was
-already failing `ci:check` at the initial commit: a **missing `.prettierrc`** (so Prettier
-disagrees with the committed formatting) and pre-existing **PHPStan/Pint** issues in
-`EventSeeder` / `EventFactory`. Those are left untouched. Making `ci:check` fully green is a
-one-off tooling pass (add the Prettier config + reformat, fix the seeder/factory types),
-intentionally kept separate from the feature work.
+The repo as delivered failed `ci:check` for reasons unrelated to the feature work:
+pre-existing **PHPStan / Pint** issues in `EventSeeder` / `EventFactory`, **ESLint** errors in
+the starter sidebar / listing, and — most broadly — a **missing Prettier config**, so Prettier
+disagreed with the committed formatting across the whole `resources/` tree.
+
+These are split into two changes so each stays reviewable on its own:
+
+1. **Feature / gap work** (on `main`) — fixes the PHPStan / Pint / ESLint issues alongside the
+   added test coverage and the published-only registration gating.
+2. **`chore/prettier-format-frontend` branch** — adds `.prettierrc.json` (the starter-kit
+   settings the codebase was already written to: single quotes, 4-space indent, `printWidth`
+   150, trailing commas, plus `prettier-plugin-tailwindcss`) and runs `prettier --write
+   resources/`. That's a mechanical, behaviour-free reformat of ~190 mostly starter-kit files,
+   kept on its own branch so it doesn't bury the feature diff.
+
+With both in place, `composer ci:check` is fully green (Pint, PHPStan, ESLint, Prettier,
+vue-tsc, and the Pest suite).

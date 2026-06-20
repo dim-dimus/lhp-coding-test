@@ -23,11 +23,11 @@ function reset() {
 <template>
     <form class="flex flex-wrap items-end gap-3" @submit.prevent>
         <div class="flex flex-col gap-1">
-            <label class="text-xs text-muted-foreground" for="filter-status">Status</label>
+            <label class="text-muted-foreground text-xs" for="filter-status">Status</label>
             <select
                 id="filter-status"
                 v-model="filters.status"
-                class="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                class="border-input bg-background h-9 rounded-md border px-3 text-sm"
                 @change="emit('change')"
             >
                 <option :value="null">All statuses</option>
@@ -36,11 +36,11 @@ function reset() {
         </div>
 
         <div class="flex flex-col gap-1">
-            <label class="text-xs text-muted-foreground" for="filter-city">Location</label>
+            <label class="text-muted-foreground text-xs" for="filter-city">Location</label>
             <select
                 id="filter-city"
                 v-model="filters.city"
-                class="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                class="border-input bg-background h-9 rounded-md border px-3 text-sm"
                 @change="emit('change')"
             >
                 <option :value="null">All locations</option>
@@ -50,30 +50,28 @@ function reset() {
 
         <template v-if="showDates">
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-muted-foreground" for="filter-from">From</label>
+                <label class="text-muted-foreground text-xs" for="filter-from">From</label>
                 <input
                     id="filter-from"
                     v-model="filters.from"
                     type="date"
-                    class="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                    class="border-input bg-background h-9 rounded-md border px-3 text-sm"
                     @change="emit('change')"
                 />
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-muted-foreground" for="filter-to">To</label>
+                <label class="text-muted-foreground text-xs" for="filter-to">To</label>
                 <input
                     id="filter-to"
                     v-model="filters.to"
                     type="date"
-                    class="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                    class="border-input bg-background h-9 rounded-md border px-3 text-sm"
                     @change="emit('change')"
                 />
             </div>
         </template>
 
-        <button type="button" class="h-9 px-3 text-sm text-muted-foreground hover:text-foreground" @click="reset">
-            Reset
-        </button>
+        <button type="button" class="text-muted-foreground hover:text-foreground h-9 px-3 text-sm" @click="reset">Reset</button>
     </form>
 </template>
