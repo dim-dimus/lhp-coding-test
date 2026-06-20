@@ -4,11 +4,13 @@ import { Building2, CalendarDays, MapPin, Ticket, Users } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { useEventDateTime } from '@/composables/useEventDateTime';
+import { getInitials } from '@/composables/useInitials';
 import type { EventRow } from '@/types/events';
 
 const props = defineProps<{
     event: EventRow;
     attendeesCount: number;
+    recentAttendees: string[];
 }>();
 
 const { formatDateTime, relative } = useEventDateTime();
@@ -100,9 +102,23 @@ function register() {
                         <Ticket class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                         <span>{{ price }}</span>
                     </div>
-                    <div class="flex items-start gap-2">
-                        <Users class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                        <span>{{ attendeesCount.toLocaleString() }} {{ attendeesCount === 1 ? 'person' : 'people' }} going</span>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-start gap-2">
+                            <Users class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                            <span>{{ attendeesCount.toLocaleString() }} {{ attendeesCount === 1 ? 'person' : 'people' }} going</span>
+                        </div>
+                        <div v-if="recentAttendees.length" class="flex flex-wrap items-center gap-1 pl-6">
+                            <span
+                                v-for="(name, index) in recentAttendees"
+                                :key="index"
+                                :title="name"
+                                class="flex size-7 items-center justify-center rounded-full bg-muted text-xs font-medium"
+                                >{{ getInitials(name) }}</span
+                            >
+                            <span v-if="attendeesCount > recentAttendees.length" class="pl-1 text-xs text-muted-foreground">
+                                +{{ (attendeesCount - recentAttendees.length).toLocaleString() }} more
+                            </span>
+                        </div>
                     </div>
                 </div>
 

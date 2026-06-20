@@ -69,6 +69,7 @@ it('shows an event detail page with attendee count', function () {
             ->where('event.id', $event->id)
             ->where('event.name', 'Global Tech Summit')
             ->where('attendeesCount', 3)
+            ->has('recentAttendees', 3)
         );
 });
 

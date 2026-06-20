@@ -97,6 +97,7 @@ class EventController extends Controller
         return Inertia::render('Events/Show', [
             'event' => (new EventResource($event))->resolve(),
             'attendeesCount' => $event->attendees()->count(),
+            'recentAttendees' => $event->attendees()->latest()->take(8)->pluck('name')->all(),
         ]);
     }
 

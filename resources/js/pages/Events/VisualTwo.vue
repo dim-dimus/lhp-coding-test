@@ -120,6 +120,7 @@ onMounted(loadCounts);
                                 <div class="min-w-0">
                                     <div class="text-xs text-muted-foreground">{{ formatTime(event.starts_at) }}</div>
                                     <div class="truncate font-medium">{{ event.name }}</div>
+                                    <div v-if="event.description" class="truncate text-xs text-muted-foreground">{{ event.description }}</div>
                                     <div class="truncate text-xs text-muted-foreground">{{ event.location?.display }}</div>
                                 </div>
                             </Link>
