@@ -21,4 +21,15 @@ class StoreAttendeeRequest extends FormRequest
             'email' => ['required', 'email', 'max:255'],
         ];
     }
+
+    /**
+     * Normalise the email to lowercase so registrations are deduplicated
+     * regardless of case (the unique index is byte-for-byte).
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('email')) {
+            $this->merge(['email' => $this->string('email')->lower()->toString()]);
+        }
+    }
 }

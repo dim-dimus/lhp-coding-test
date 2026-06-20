@@ -185,3 +185,28 @@ it('drills into a single day via start/end timestamps', function () {
         ->assertJsonPath('total', 1)
         ->assertJsonPath('data.0.created_time', Carbon::parse('2026-06-10 12:00', 'UTC')->timestamp);
 });
+
+it('rejects an invalid status filter instead of returning empty', function () {
+    $this->getJson(route('events.data', ['status' => 'bogus']))
+        ->assertStatus(422);
+});
+
+it('rejects an unknown city filter instead of returning all events', function () {
+    $this->getJson(route('events.data', ['city' => 'Atlantis, Nowhere']))
+        ->assertStatus(422);
+});
+
+it('rejects an out-of-range calendar offset', function () {
+    $this->getJson(route('events.calendar', ['start' => 1, 'end' => 2, 'offset' => 999999]))
+        ->assertStatus(422);
+});
+
+it('excludes events without a start time from the listing', function () {
+    $user = User::factory()->create();
+    Event::factory()->for($user)->create(['created_time' => null]);
+    Event::factory()->for($user)->create(['created_time' => Carbon::parse('2025-01-01', 'UTC')->timestamp]);
+
+    $this->getJson(route('events.data'))
+        ->assertOk()
+        ->assertJsonPath('total', 1);
+});

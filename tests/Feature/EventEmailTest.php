@@ -55,7 +55,7 @@ it('sends a 3-day reminder once and is idempotent on re-run', function () {
 
 it('sends a 24-hour reminder for imminent events', function () {
     Mail::fake();
-    $event = Event::factory()->create(['created_time' => now()->addHours(12)->timestamp]);
+    $event = Event::factory()->create(['created_time' => now()->addHours(18)->timestamp]);
     $attendee = Attendee::factory()->for($event)->create();
 
     $this->artisan('events:send-reminders');
@@ -72,4 +72,15 @@ it('does not remind for events outside the windows', function () {
     $this->artisan('events:send-reminders');
 
     Mail::assertNothingQueued();
+});
+
+it('does not send the 3-day reminder once the event is only about a day away', function () {
+    Mail::fake();
+    // ~25h away: past the 3-day band, so it must NOT get the "3 days" email.
+    $event = Event::factory()->create(['created_time' => now()->addHours(25)->timestamp]);
+    Attendee::factory()->for($event)->create();
+
+    $this->artisan('events:send-reminders');
+
+    Mail::assertNotQueued(EventReminderMail::class);
 });

@@ -8,6 +8,8 @@ use App\Support\ReverseGeocoder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -49,6 +51,18 @@ class EventController extends Controller
 
     public function data(Request $request): JsonResponse
     {
+        $invalid = $this->validateFilters($request, [
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date'],
+            'start' => ['nullable', 'integer'],
+            'end' => ['nullable', 'integer'],
+            'page' => ['nullable', 'integer', 'min:1'],
+        ]);
+
+        if ($invalid !== null) {
+            return $invalid;
+        }
+
         $start = microtime(true);
 
         $paginator = $this->listingQuery($request)->paginate(50)->withQueryString();
@@ -74,6 +88,17 @@ class EventController extends Controller
      */
     public function calendar(Request $request): JsonResponse
     {
+        $invalid = $this->validateFilters($request, [
+            'start' => ['required', 'integer'],
+            'end' => ['required', 'integer'],
+            // Bound the bucketing offset to the real timezone range (±14h).
+            'offset' => ['nullable', 'integer', 'between:-50400,50400'],
+        ]);
+
+        if ($invalid !== null) {
+            return $invalid;
+        }
+
         $offset = $request->integer('offset');
 
         $query = Event::query();
@@ -115,6 +140,39 @@ class EventController extends Controller
     }
 
     /**
+     * Validation rules for the status + location inputs, so an unknown city or
+     * status returns a 422 rather than silently widening (city) or emptying
+     * (status) the results.
+     *
+     * @return array<string, mixed>
+     */
+    private function filterRules(): array
+    {
+        return [
+            'status' => ['nullable', Rule::in(self::STATUSES)],
+            'city' => ['nullable', Rule::in(array_column(ReverseGeocoder::cities(), 'value'))],
+        ];
+    }
+
+    /**
+     * Validate the JSON filter endpoints, returning a 422 JSON response on
+     * failure. Done explicitly because the app only auto-renders validation as
+     * JSON for `api/*` routes, and these live under `events/`.
+     *
+     * @param  array<string, mixed>  $extra
+     */
+    private function validateFilters(Request $request, array $extra): ?JsonResponse
+    {
+        $validator = Validator::make($request->all(), $this->filterRules() + $extra);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Invalid request.', 'errors' => $validator->errors()], 422);
+        }
+
+        return null;
+    }
+
+    /**
      * Status + location filters shared by the listing and the calendar. Both
      * target indexed columns (status, latitude/longitude).
      *
@@ -150,6 +208,7 @@ class EventController extends Controller
         $this->applyFilters($query, $request);
 
         return $query
+            ->whereNotNull('created_time')
             ->when($request->date('from', null, 'UTC'), fn (Builder $q, $from) => $q->where('created_time', '>=', $from->startOfDay()->timestamp))
             ->when($request->date('to', null, 'UTC'), fn (Builder $q, $to) => $q->where('created_time', '<=', $to->endOfDay()->timestamp))
             ->when($request->integer('start'), fn (Builder $q, $start) => $q->where('created_time', '>=', $start))

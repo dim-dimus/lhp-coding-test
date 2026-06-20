@@ -19,6 +19,13 @@ final class ReverseGeocoder
     /** Jitter radius the seeder applies around each anchor, in degrees. */
     private const JITTER = 0.5;
 
+    /**
+     * Max squared degree-distance from an anchor to still resolve a city.
+     * Seeded points sit within ~0.7° (the jitter); beyond ~2° there is no
+     * sensible nearby city (e.g. mid-ocean), so we return null instead.
+     */
+    private const MAX_DISTANCE_SQUARED = 4.0;
+
     /** @var list<array{0: float, 1: float, 2: string, 3: string}> [lat, lng, city, country] */
     private const ANCHORS = [
         // United States
@@ -125,6 +132,10 @@ final class ReverseGeocoder
                 $nearestCity = $city;
                 $nearestCountry = $country;
             }
+        }
+
+        if ($best > self::MAX_DISTANCE_SQUARED) {
+            return null;
         }
 
         return [

@@ -14,6 +14,11 @@ it('returns null when coordinates are missing', function () {
     expect(ReverseGeocoder::label(null, null))->toBeNull();
 });
 
+it('returns null for coordinates far from every anchor', function () {
+    // Middle of the Pacific — nowhere near any city anchor.
+    expect(ReverseGeocoder::label(0.0, -150.0))->toBeNull();
+});
+
 it('produces a bounding box that contains the matching anchor', function () {
     $bbox = ReverseGeocoder::bbox('New York, USA');
 

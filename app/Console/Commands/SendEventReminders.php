@@ -10,14 +10,17 @@ use Illuminate\Support\Facades\Mail;
 
 class SendEventReminders extends Command
 {
+    /** Hours before each window we still send, to tolerate irregular runs. */
+    private const TOLERANCE_HOURS = 12;
+
     protected $signature = 'events:send-reminders';
 
     protected $description = 'Email attendees a reminder 3 days and 24 hours before their event.';
 
     public function handle(): int
     {
-        $sent = $this->remind('reminded_72h_at', now()->addDay()->getTimestamp(), now()->addDays(3)->getTimestamp(), '3 days');
-        $sent += $this->remind('reminded_24h_at', now()->getTimestamp(), now()->addDay()->getTimestamp(), '24 hours');
+        $sent = $this->remind('reminded_72h_at', 72, '3 days');
+        $sent += $this->remind('reminded_24h_at', 24, '24 hours');
 
         $this->info("Queued {$sent} reminder(s).");
 
@@ -25,14 +28,18 @@ class SendEventReminders extends Command
     }
 
     /**
-     * Email everyone whose event starts in (`$after`, `$until`] and who hasn't
-     * been reminded for this window yet, then flag them so re-runs are no-ops.
+     * Email everyone whose event starts in a narrow band ending `$leadHours`
+     * ahead (so the "3 days" / "24 hours" label stays honest), who hasn't been
+     * reminded for this window yet, then flag them so re-runs are no-ops.
      */
-    private function remind(string $flag, int $after, int $until, string $window): int
+    private function remind(string $flag, int $leadHours, string $window): int
     {
+        $upper = now()->addHours($leadHours)->getTimestamp();
+        $lower = now()->addHours($leadHours - self::TOLERANCE_HOURS)->getTimestamp();
+
         $attendees = Attendee::query()
             ->whereNull($flag)
-            ->whereHas('event', fn (Builder $query) => $query->whereBetween('created_time', [$after + 1, $until]))
+            ->whereHas('event', fn (Builder $query) => $query->whereBetween('created_time', [$lower + 1, $upper]))
             ->with('event')
             ->get();
 
