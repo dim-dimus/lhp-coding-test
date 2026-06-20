@@ -3,8 +3,9 @@ import { Head } from '@inertiajs/vue3';
 import { computed, onMounted, ref } from 'vue';
 import EventCard from '@/components/events/EventCard.vue';
 import EventFilters from '@/components/events/EventFilters.vue';
+import RegisterDialog from '@/components/events/RegisterDialog.vue';
 import { useEventFeed } from '@/composables/useEventFeed';
-import type { City, EventFilters as EventFiltersType } from '@/types/events';
+import type { City, EventFilters as EventFiltersType, EventRow } from '@/types/events';
 
 const props = defineProps<{
     statuses: string[];
@@ -15,6 +16,14 @@ const props = defineProps<{
 const filters = ref<EventFiltersType>({ ...props.filters });
 
 const { rows, total, loading, hasLoadedOnce, sentinel, loadedBytes, loadedMs, applyFilters } = useEventFeed();
+
+const registerOpen = ref(false);
+const registerEvent = ref<EventRow | null>(null);
+
+function onRegister(event: EventRow) {
+    registerEvent.value = event;
+    registerOpen.value = true;
+}
 
 const loadedSize = computed(() => {
     const kb = loadedBytes.value / 1024;
@@ -43,7 +52,7 @@ onMounted(reload);
         <EventFilters v-model="filters" :statuses="statuses" :cities="cities" @change="reload" />
 
         <div v-if="rows.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <EventCard v-for="event in rows" :key="event.id" :event="event" />
+            <EventCard v-for="event in rows" :key="event.id" :event="event" @register="onRegister" />
         </div>
 
         <div v-else-if="hasLoadedOnce && !loading" class="rounded-xl border border-dashed py-16 text-center text-muted-foreground">
@@ -56,5 +65,7 @@ onMounted(reload);
             <span v-if="loading">Loading…</span>
             <span v-else-if="hasLoadedOnce">Loaded {{ loadedSize }} · {{ (loadedMs / 1000).toFixed(1) }}s</span>
         </div>
+
+        <RegisterDialog v-model:open="registerOpen" :event="registerEvent" />
     </div>
 </template>

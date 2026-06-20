@@ -92,11 +92,9 @@ onMounted(loadCounts);
                         ]"
                         @click="selectDay(cell)"
                     >
-                        <div v-if="cell.count > 0" class="absolute inset-0 bg-primary" :style="{ opacity: 0.08 + (cell.count / maxCount) * 0.5 }"></div>
-                        <div class="relative flex h-full flex-col justify-between">
-                            <span class="text-xs" :class="cell.isToday ? 'font-bold text-primary' : 'text-muted-foreground'">{{ cell.day }}</span>
-                            <span v-if="cell.count > 0" class="text-sm font-semibold tabular-nums">{{ cell.count }}</span>
-                        </div>
+                        <div v-if="cell.count > 0" class="absolute inset-0 bg-[#439cfc]" :style="{ opacity: 0.08 + (cell.count / maxCount) * 0.5 }"></div>
+                        <span class="absolute left-1.5 top-1 text-xs" :class="cell.isToday ? 'font-bold text-primary' : 'text-muted-foreground'">{{ cell.day }}</span>
+                        <span v-if="cell.count > 0" class="absolute inset-0 flex items-center justify-center text-base font-semibold tabular-nums">{{ cell.count }}</span>
                     </button>
                 </div>
 
