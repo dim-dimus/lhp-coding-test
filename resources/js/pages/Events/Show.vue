@@ -4,6 +4,7 @@ import { Building2, CalendarDays, MapPin, Ticket, Users } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { useEventDateTime } from '@/composables/useEventDateTime';
+import { formatPrice } from '@/composables/useEventPrice';
 import { getInitials } from '@/composables/useInitials';
 import type { EventRow } from '@/types/events';
 
@@ -23,19 +24,7 @@ const statusVariant = computed(() => {
     return variants[props.event.status as keyof typeof variants] ?? 'outline';
 });
 
-const price = computed(() => {
-    const value = props.event.price;
-
-    if (!value) {
-        return null;
-    }
-
-    if (value.amount === 0) {
-        return 'Free';
-    }
-
-    return new Intl.NumberFormat(undefined, { style: 'currency', currency: value.currency }).format(value.amount);
-});
+const price = computed(() => formatPrice(props.event.price));
 
 const canRegister = computed(() => props.event.status === 'published');
 
