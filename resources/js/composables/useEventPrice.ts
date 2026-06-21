@@ -15,7 +15,5 @@ export function formatPrice(price: EventPrice | null): string | null {
         return 'Free';
     }
 
-    return new Intl.NumberFormat(undefined, { style: 'currency', currency: price.currency })
-        .format(price.amount)
-        .replace(/(\p{L})(\$)/u, '$1 $2');
+    return new Intl.NumberFormat(undefined, { style: 'currency', currency: price.currency }).format(price.amount).replace(/(\p{L})(\$)/u, '$1 $2');
 }
