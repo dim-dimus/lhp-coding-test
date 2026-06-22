@@ -33,17 +33,9 @@ const user = computed(() => page.props.auth.user);
     <h1 class="sr-only">Profile settings</h1>
 
     <div class="flex flex-col space-y-6">
-        <Heading
-            variant="small"
-            title="Profile"
-            description="Update your name and email address"
-        />
+        <Heading variant="small" title="Profile" description="Update your name and email address" />
 
-        <Form
-            v-bind="ProfileController.update.form()"
-            class="space-y-6"
-            v-slot="{ errors, processing }"
-        >
+        <Form v-bind="ProfileController.update.form()" class="space-y-6" v-slot="{ errors, processing }">
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
                 <Input
@@ -74,7 +66,7 @@ const user = computed(() => page.props.auth.user);
             </div>
 
             <div v-if="page.props.mustVerifyEmail && !user.email_verified_at">
-                <p class="-mt-4 text-sm text-muted-foreground">
+                <p class="text-muted-foreground -mt-4 text-sm">
                     Your email address is unverified.
                     <Link
                         :href="send()"
@@ -85,18 +77,13 @@ const user = computed(() => page.props.auth.user);
                     </Link>
                 </p>
 
-                <div
-                    v-if="page.props.status === 'verification-link-sent'"
-                    class="mt-2 text-sm font-medium text-green-600"
-                >
+                <div v-if="page.props.status === 'verification-link-sent'" class="mt-2 text-sm font-medium text-green-600">
                     A new verification link has been sent to your email address.
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
-                <Button :disabled="processing" data-test="update-profile-button"
-                    >Save</Button
-                >
+                <Button :disabled="processing" data-test="update-profile-button">Save</Button>
             </div>
         </Form>
     </div>

@@ -37,11 +37,7 @@ defineOptions({
     <h1 class="sr-only">Security settings</h1>
 
     <div class="space-y-6">
-        <Heading
-            variant="small"
-            title="Update password"
-            description="Ensure your account is using a long, random password to stay secure"
-        />
+        <Heading variant="small" title="Update password" description="Ensure your account is using a long, random password to stay secure" />
 
         <Form
             v-bind="SecurityController.update.form()"
@@ -49,11 +45,7 @@ defineOptions({
                 preserveScroll: true,
             }"
             reset-on-success
-            :reset-on-error="[
-                'password',
-                'password_confirmation',
-                'current_password',
-            ]"
+            :reset-on-error="['password', 'password_confirmation', 'current_password']"
             class="space-y-6"
             v-slot="{ errors, processing }"
         >
@@ -96,24 +88,12 @@ defineOptions({
             </div>
 
             <div class="flex items-center gap-4">
-                <Button
-                    :disabled="processing"
-                    data-test="update-password-button"
-                >
-                    Save
-                </Button>
+                <Button :disabled="processing" data-test="update-password-button"> Save </Button>
             </div>
         </Form>
     </div>
 
-    <ManageTwoFactor
-        :canManageTwoFactor="canManageTwoFactor"
-        :requiresConfirmation="requiresConfirmation"
-        :twoFactorEnabled="twoFactorEnabled"
-    />
+    <ManageTwoFactor :canManageTwoFactor="canManageTwoFactor" :requiresConfirmation="requiresConfirmation" :twoFactorEnabled="twoFactorEnabled" />
 
-    <ManagePasskeys
-        :canManagePasskeys="canManagePasskeys"
-        :passkeys="passkeys"
-    />
+    <ManagePasskeys :canManagePasskeys="canManagePasskeys" :passkeys="passkeys" />
 </template>

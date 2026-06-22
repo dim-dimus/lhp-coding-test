@@ -45,13 +45,13 @@ function register() {
 <template>
     <Head :title="event.name" />
 
-    <div class="mx-auto flex w-full max-w-5xl animate-fade flex-col gap-6 p-4 sm:p-6">
-        <Link href="/events-visual-1" class="text-sm text-muted-foreground hover:text-foreground">← Back to events</Link>
+    <div class="animate-fade mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-6">
+        <Link href="/events-visual-1" class="text-muted-foreground hover:text-foreground text-sm">← Back to events</Link>
 
         <div class="flex flex-col gap-3">
-            <div class="relative aspect-video overflow-hidden rounded-xl border bg-muted">
+            <div class="bg-muted relative aspect-video overflow-hidden rounded-xl border">
                 <img :src="activeImage" alt="" class="size-full object-cover" />
-                <Badge :variant="statusVariant" class="absolute left-3 top-3 capitalize">{{ event.status.replace('_', ' ') }}</Badge>
+                <Badge :variant="statusVariant" class="absolute top-3 left-3 capitalize">{{ event.status.replace('_', ' ') }}</Badge>
             </div>
             <div v-if="event.images.length > 1" class="flex gap-2">
                 <button
@@ -59,7 +59,7 @@ function register() {
                     :key="index"
                     type="button"
                     class="aspect-video w-24 overflow-hidden rounded-md border transition"
-                    :class="image === activeImage ? 'ring-2 ring-primary' : 'opacity-70 hover:opacity-100'"
+                    :class="image === activeImage ? 'ring-primary ring-2' : 'opacity-70 hover:opacity-100'"
                     @click="activeImage = image"
                 >
                     <img :src="image" alt="" class="size-full object-cover" />
@@ -70,36 +70,36 @@ function register() {
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
             <div class="flex flex-col gap-4">
                 <div class="flex flex-col gap-1">
-                    <span class="text-sm font-medium capitalize text-muted-foreground">{{ event.type }}</span>
+                    <span class="text-muted-foreground text-sm font-medium capitalize">{{ event.type }}</span>
                     <h1 class="text-2xl font-semibold tracking-tight">{{ event.name }}</h1>
                 </div>
-                <p v-if="event.description" class="leading-relaxed text-muted-foreground">{{ event.description }}</p>
+                <p v-if="event.description" class="text-muted-foreground leading-relaxed">{{ event.description }}</p>
             </div>
 
             <aside class="flex flex-col gap-4">
                 <div class="flex flex-col gap-3 rounded-xl border p-4 text-sm">
                     <div class="flex items-start gap-2">
-                        <CalendarDays class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                        <CalendarDays class="text-muted-foreground mt-0.5 size-4 shrink-0" />
                         <div>
                             <div>{{ formatDateTime(event.starts_at) }}</div>
-                            <div v-if="event.starts_at" class="text-xs text-muted-foreground">{{ relative(event.starts_at) }}</div>
+                            <div v-if="event.starts_at" class="text-muted-foreground text-xs">{{ relative(event.starts_at) }}</div>
                         </div>
                     </div>
                     <div class="flex items-start gap-2">
-                        <MapPin class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                        <MapPin class="text-muted-foreground mt-0.5 size-4 shrink-0" />
                         <span>{{ event.location?.display ?? 'Location TBA' }}</span>
                     </div>
                     <div v-if="event.venue" class="flex items-start gap-2">
-                        <Building2 class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                        <Building2 class="text-muted-foreground mt-0.5 size-4 shrink-0" />
                         <span>{{ event.venue }}</span>
                     </div>
                     <div v-if="price" class="flex items-start gap-2">
-                        <Ticket class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                        <Ticket class="text-muted-foreground mt-0.5 size-4 shrink-0" />
                         <span>{{ price }}</span>
                     </div>
                     <div class="flex flex-col gap-2">
                         <div class="flex items-start gap-2">
-                            <Users class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                            <Users class="text-muted-foreground mt-0.5 size-4 shrink-0" />
                             <span>{{ attendeesCount.toLocaleString() }} {{ attendeesCount === 1 ? 'person' : 'people' }} going</span>
                         </div>
                         <div v-if="recentAttendees.length" class="flex flex-wrap items-center gap-1 pl-6">
@@ -107,10 +107,10 @@ function register() {
                                 v-for="(name, index) in recentAttendees"
                                 :key="index"
                                 :title="name"
-                                class="flex size-7 items-center justify-center rounded-full bg-muted text-xs font-medium"
+                                class="bg-muted flex size-7 items-center justify-center rounded-full text-xs font-medium"
                                 >{{ getInitials(name) }}</span
                             >
-                            <span v-if="attendeesCount > recentAttendees.length" class="pl-1 text-xs text-muted-foreground">
+                            <span v-if="attendeesCount > recentAttendees.length" class="text-muted-foreground pl-1 text-xs">
                                 +{{ (attendeesCount - recentAttendees.length).toLocaleString() }} more
                             </span>
                         </div>
@@ -120,26 +120,36 @@ function register() {
                 <div class="flex flex-col gap-3 rounded-xl border p-4">
                     <h2 class="font-semibold">Register your interest</h2>
 
-                    <div v-if="form.recentlySuccessful" class="animate-fade rounded-md bg-primary/10 px-3 py-2 text-sm text-primary">
+                    <div v-if="form.recentlySuccessful" class="animate-fade bg-primary/10 text-primary rounded-md px-3 py-2 text-sm">
                         You're on the list — see you there!
                     </div>
 
                     <form class="flex flex-col gap-3" @submit.prevent="register">
                         <div class="flex flex-col gap-1">
-                            <label class="text-xs text-muted-foreground" for="attendee-name">Name</label>
-                            <input id="attendee-name" v-model="form.name" type="text" class="h-9 rounded-md border border-input bg-background px-3 text-sm" />
-                            <p v-if="form.errors.name" class="text-xs text-destructive">{{ form.errors.name }}</p>
+                            <label class="text-muted-foreground text-xs" for="attendee-name">Name</label>
+                            <input
+                                id="attendee-name"
+                                v-model="form.name"
+                                type="text"
+                                class="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                            />
+                            <p v-if="form.errors.name" class="text-destructive text-xs">{{ form.errors.name }}</p>
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="text-xs text-muted-foreground" for="attendee-email">Email</label>
-                            <input id="attendee-email" v-model="form.email" type="email" class="h-9 rounded-md border border-input bg-background px-3 text-sm" />
-                            <p v-if="form.errors.email" class="text-xs text-destructive">{{ form.errors.email }}</p>
+                            <label class="text-muted-foreground text-xs" for="attendee-email">Email</label>
+                            <input
+                                id="attendee-email"
+                                v-model="form.email"
+                                type="email"
+                                class="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                            />
+                            <p v-if="form.errors.email" class="text-destructive text-xs">{{ form.errors.email }}</p>
                         </div>
                         <button
                             type="submit"
                             :disabled="form.processing || !canRegister"
                             :title="canRegister ? undefined : 'Event is not active'"
-                            class="h-9 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                            class="bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md px-3 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             Register
                         </button>

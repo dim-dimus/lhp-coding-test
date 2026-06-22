@@ -44,7 +44,7 @@ onMounted(reload);
     <div class="flex flex-col gap-6 p-4 sm:p-6">
         <div class="flex flex-col gap-1">
             <h1 class="text-2xl font-semibold tracking-tight">Browse events</h1>
-            <p class="text-sm text-muted-foreground">
+            <p class="text-muted-foreground text-sm">
                 {{ total !== null ? `${total.toLocaleString()} events` : 'Loading…' }}
             </p>
         </div>
@@ -55,13 +55,13 @@ onMounted(reload);
             <EventCard v-for="event in rows" :key="event.id" :event="event" @register="onRegister" />
         </div>
 
-        <div v-else-if="hasLoadedOnce && !loading" class="rounded-xl border border-dashed py-16 text-center text-muted-foreground">
+        <div v-else-if="hasLoadedOnce && !loading" class="text-muted-foreground rounded-xl border border-dashed py-16 text-center">
             No events match your filters.
         </div>
 
         <div ref="sentinel" class="h-px"></div>
 
-        <div class="pb-4 text-center text-sm text-muted-foreground">
+        <div class="text-muted-foreground pb-4 text-center text-sm">
             <span v-if="loading">Loading…</span>
             <span v-else-if="hasLoadedOnce">Loaded {{ loadedSize }} · {{ (loadedMs / 1000).toFixed(1) }}s</span>
         </div>

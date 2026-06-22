@@ -26,10 +26,10 @@ const canRegister = computed(() => props.event.status === 'published');
 
 <template>
     <div
-        class="group flex animate-rise flex-col overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+        class="group animate-rise bg-card text-card-foreground flex flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg"
     >
         <Link :href="`/events/${event.id}`" class="flex flex-1 flex-col">
-            <div class="relative aspect-video overflow-hidden bg-muted">
+            <div class="bg-muted relative aspect-video overflow-hidden">
                 <!-- Cover image cross-fades to the second image on hover, surfacing the 2+ images per event. -->
                 <img
                     :src="event.images[0]"
@@ -44,12 +44,12 @@ const canRegister = computed(() => props.event.status === 'published');
                     loading="lazy"
                     class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                 />
-                <span class="absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-0.5 text-xs font-medium capitalize text-white backdrop-blur">
+                <span class="absolute top-3 left-3 rounded-full bg-black/55 px-2.5 py-0.5 text-xs font-medium text-white capitalize backdrop-blur">
                     {{ event.type }}
                 </span>
                 <span
                     v-if="event.images.length > 1"
-                    class="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-xs text-white backdrop-blur"
+                    class="absolute right-3 bottom-3 flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-xs text-white backdrop-blur"
                 >
                     <Images class="size-3" />
                     {{ event.images.length }}
@@ -62,19 +62,19 @@ const canRegister = computed(() => props.event.status === 'published');
                     <span v-if="price" class="text-sm font-semibold">{{ price }}</span>
                 </div>
 
-                <h3 class="line-clamp-1 font-semibold leading-tight">{{ event.name }}</h3>
-                <p v-if="event.description" class="line-clamp-2 text-sm text-muted-foreground">{{ event.description }}</p>
+                <h3 class="line-clamp-1 leading-tight font-semibold">{{ event.name }}</h3>
+                <p v-if="event.description" class="text-muted-foreground line-clamp-2 text-sm">{{ event.description }}</p>
 
                 <div class="mt-auto space-y-1 pt-2 text-sm">
-                    <div class="flex items-center gap-1.5 text-muted-foreground">
+                    <div class="text-muted-foreground flex items-center gap-1.5">
                         <MapPin class="size-3.5 shrink-0" />
                         <span class="truncate">{{ event.location?.display ?? 'Location TBA' }}</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <CalendarDays class="size-3.5 shrink-0 text-muted-foreground" />
+                        <CalendarDays class="text-muted-foreground size-3.5 shrink-0" />
                         <span>{{ formatDateTime(event.starts_at) }}</span>
                     </div>
-                    <div v-if="event.starts_at" class="pl-5 text-xs text-muted-foreground">{{ relative(event.starts_at) }}</div>
+                    <div v-if="event.starts_at" class="text-muted-foreground pl-5 text-xs">{{ relative(event.starts_at) }}</div>
                 </div>
             </div>
         </Link>
@@ -84,7 +84,7 @@ const canRegister = computed(() => props.event.status === 'published');
                 type="button"
                 :disabled="!canRegister"
                 :title="canRegister ? undefined : 'Event is not active'"
-                class="h-9 w-full rounded-md bg-primary text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                class="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-full rounded-md text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
                 @click="emit('register', event)"
             >
                 Register
