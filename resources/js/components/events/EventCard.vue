@@ -84,7 +84,7 @@ const canRegister = computed(() => props.event.status === 'published');
                 type="button"
                 :disabled="!canRegister"
                 :title="canRegister ? undefined : 'Event is not active'"
-                class="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-full rounded-md text-sm font-medium transition"
+                class="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-full rounded-md text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
                 @click="emit('register', event)"
             >
                 Register
