@@ -71,3 +71,25 @@ SEED_ROWS=50000 php artisan migrate:fresh --seed   # rebuild + reseed a larger s
 - **Locations** are derived offline from each event's coordinates — no geocoding API.
 - Email is sent via the `log` mailer by default, so confirmations/reminders land in
   `storage/logs/laravel.log`.
+
+## Code formatting (Prettier)
+
+The frontend is formatted with **Prettier**. See
+[PR #1](https://github.com/dim-dimus/lhp-coding-test/pull/1) for the full change.
+
+The repo shipped without a Prettier config, so `composer ci:check`'s `format:check` step
+failed against the committed code. This PR adds a `.prettierrc.json` capturing the
+starter-kit conventions the codebase was already written to, then runs `prettier --write`
+across `resources/`:
+
+- **single quotes**, **semicolons**, **4-space indent**, **trailing commas** (`all`)
+- **`printWidth` 150**
+- **`prettier-plugin-tailwindcss`** — sorts Tailwind utility classes into a canonical order
+
+The reformat is mechanical and behaviour-free (~190 mostly starter-kit files). With the
+config in place, the **Prettier gate in `composer ci:check` is green**.
+
+```bash
+npm run format         # write Prettier formatting across resources/
+npm run format:check   # verify formatting (what ci:check runs)
+```
