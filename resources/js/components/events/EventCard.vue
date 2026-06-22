@@ -20,6 +20,8 @@ const statusVariant = computed(() => {
 });
 
 const price = computed(() => formatPrice(props.event.price));
+
+const canRegister = computed(() => props.event.status === 'published');
 </script>
 
 <template>
@@ -80,6 +82,8 @@ const price = computed(() => formatPrice(props.event.price));
         <div class="px-4 pb-4">
             <button
                 type="button"
+                :disabled="!canRegister"
+                :title="canRegister ? undefined : 'Event is not active'"
                 class="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-full rounded-md text-sm font-medium transition"
                 @click="emit('register', event)"
             >
